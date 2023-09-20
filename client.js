@@ -1,36 +1,36 @@
 //var Color = importNamespace('PixelCombats.ScriptingApi.Structures');
 //var System = importNamespace('System');
 
-// константы
-var WaitingPlayersTime = 10;
-var BuildBaseTime = 30;
-var GameModeTime = 600;
-var EndOfMatchTime = 10;
+// ГЄГ®Г­Г±ГІГ Г­ГІГ»
+var WaitingPlayersTime = 1;
+var BuildBaseTime = 3;
+var GameModeTime = 60;
+var EndOfMatchTime = 100;
 
-// константы имен
+// ГЄГ®Г­Г±ГІГ Г­ГІГ» ГЁГ¬ГҐГ­
 var WaitingStateValue = "Waiting";
 var BuildModeStateValue = "BuildMode";
 var GameStateValue = "Game";
 var EndOfMatchStateValue = "EndOfMatch";
 
-// постоянные переменные
+// ГЇГ®Г±ГІГ®ГїГ­Г­Г»ГҐ ГЇГҐГ°ГҐГ¬ГҐГ­Г­Г»ГҐ
 var mainTimer = Timers.GetContext().Get("Main");
 var stateProp = Properties.GetContext().Get("State");
 
-// применяем параметры создания комнаты
+// ГЇГ°ГЁГ¬ГҐГ­ГїГҐГ¬ ГЇГ Г°Г Г¬ГҐГІГ°Г» Г±Г®Г§Г¤Г Г­ГЁГї ГЄГ®Г¬Г­Г ГІГ»
 Damage.FriendlyFire = GameMode.Parameters.GetBool("FriendlyFire");
 Map.Rotation = GameMode.Parameters.GetBool("MapRotation");
 BreackGraph.OnlyPlayerBlocksDmg = GameMode.Parameters.GetBool("PartialDesruction");
 BreackGraph.WeakBlocks = GameMode.Parameters.GetBool("LoosenBlocks");
 
-// блок игрока всегда усилен
+// ГЎГ«Г®ГЄ ГЁГЈГ°Г®ГЄГ  ГўГ±ГҐГЈГ¤Г  ГіГ±ГЁГ«ГҐГ­
 BreackGraph.PlayerBlockBoost = true;
 
-// параметры игры
+// ГЇГ Г°Г Г¬ГҐГІГ°Г» ГЁГЈГ°Г»
 Properties.GetContext().GameModeName.Value = "GameModes/Team Dead Match";
 TeamsBalancer.IsAutoBalance = true;
 Ui.GetContext().MainTimerId.Value = mainTimer.Id;
-// создаем команды
+// Г±Г®Г§Г¤Г ГҐГ¬ ГЄГ®Г¬Г Г­Г¤Г»
 Teams.Add("Blue", "Teams/Blue", { b: 1 });
 Teams.Add("Red", "Teams/Red", { r: 1 });
 var blueTeam = Teams.Get("Blue");
@@ -40,11 +40,11 @@ redTeam.Spawns.SpawnPointsGroups.Add(2);
 blueTeam.Build.BlocksSet.Value = BuildBlocksSet.Blue;
 redTeam.Build.BlocksSet.Value = BuildBlocksSet.Red;
 
-// задаем макс смертей команд
+// Г§Г Г¤Г ГҐГ¬ Г¬Г ГЄГ± Г±Г¬ГҐГ°ГІГҐГ© ГЄГ®Г¬Г Г­Г¤
 var maxDeaths = Players.MaxCount * 5;
 Teams.Get("Red").Properties.Get("Deaths").Value = maxDeaths;
 Teams.Get("Blue").Properties.Get("Deaths").Value = maxDeaths;
-// задаем что выводить в лидербордах
+// Г§Г Г¤Г ГҐГ¬ Г·ГІГ® ГўГ»ГўГ®Г¤ГЁГІГј Гў Г«ГЁГ¤ГҐГ°ГЎГ®Г°Г¤Г Гµ
 LeaderBoard.PlayerLeaderBoardValues = [
 	{
 		Value: "Kills",
@@ -72,25 +72,25 @@ LeaderBoard.TeamLeaderBoardValue = {
 	DisplayName: "Statistics\Deaths",
 	ShortDisplayName: "Statistics\Deaths"
 };
-// вес команды в лидерборде
+// ГўГҐГ± ГЄГ®Г¬Г Г­Г¤Г» Гў Г«ГЁГ¤ГҐГ°ГЎГ®Г°Г¤ГҐ
 LeaderBoard.TeamWeightGetter.Set(function(team) {
 	return team.Properties.Get("Deaths").Value;
 });
-// вес игрока в лидерборде
+// ГўГҐГ± ГЁГЈГ°Г®ГЄГ  Гў Г«ГЁГ¤ГҐГ°ГЎГ®Г°Г¤ГҐ
 LeaderBoard.PlayersWeightGetter.Set(function(player) {
 	return player.Properties.Get("Kills").Value;
 });
 
-// задаем что выводить вверху
+// Г§Г Г¤Г ГҐГ¬ Г·ГІГ® ГўГ»ГўГ®Г¤ГЁГІГј ГўГўГҐГ°ГµГі
 Ui.GetContext().TeamProp1.Value = { Team: "Blue", Prop: "Deaths" };
 Ui.GetContext().TeamProp2.Value = { Team: "Red", Prop: "Deaths" };
 
-// разрешаем вход в команды по запросу
+// Г°Г Г§Г°ГҐГёГ ГҐГ¬ ГўГµГ®Г¤ Гў ГЄГ®Г¬Г Г­Г¤Г» ГЇГ® Г§Г ГЇГ°Г®Г±Гі
 Teams.OnRequestJoinTeam.Add(function(player,team){team.Add(player);});
-// спавн по входу в команду
+// Г±ГЇГ ГўГ­ ГЇГ® ГўГµГ®Г¤Гі Гў ГЄГ®Г¬Г Г­Г¤Гі
 Teams.OnPlayerChangeTeam.Add(function(player){ player.Spawns.Spawn()});
 
-// делаем игроков неуязвимыми после спавна
+// Г¤ГҐГ«Г ГҐГ¬ ГЁГЈГ°Г®ГЄГ®Гў Г­ГҐГіГїГ§ГўГЁГ¬Г»Г¬ГЁ ГЇГ®Г±Г«ГҐ Г±ГЇГ ГўГ­Г 
 var immortalityTimerName="immortality";
 Spawns.GetContext().OnSpawn.Add(function(player){
 	player.Properties.Immortality.Value=true;
@@ -101,27 +101,27 @@ Timers.OnPlayerTimer.Add(function(timer){
 	timer.Player.Properties.Immortality.Value=false;
 });
 
-// после каждой смерти игрока отнимаем одну смерть в команде
+// ГЇГ®Г±Г«ГҐ ГЄГ Г¦Г¤Г®Г© Г±Г¬ГҐГ°ГІГЁ ГЁГЈГ°Г®ГЄГ  Г®ГІГ­ГЁГ¬Г ГҐГ¬ Г®Г¤Г­Гі Г±Г¬ГҐГ°ГІГј Гў ГЄГ®Г¬Г Г­Г¤ГҐ
 Properties.OnPlayerProperty.Add(function(context, value) {
 	if (value.Name !== "Deaths") return;
 	if (context.Player.Team == null) return;
 	context.Player.Team.Properties.Get("Deaths").Value--;
 });
-// если в команде количество смертей занулилось то завершаем игру
+// ГҐГ±Г«ГЁ Гў ГЄГ®Г¬Г Г­Г¤ГҐ ГЄГ®Г«ГЁГ·ГҐГ±ГІГўГ® Г±Г¬ГҐГ°ГІГҐГ© Г§Г Г­ГіГ«ГЁГ«Г®Г±Гј ГІГ® Г§Г ГўГҐГ°ГёГ ГҐГ¬ ГЁГЈГ°Гі
 Properties.OnTeamProperty.Add(function(context, value) {
 	if (value.Name !== "Deaths") return;
 	if (value.Value <= 0) SetEndOfMatchMode();
 });
 
-// счетчик спавнов
+// Г±Г·ГҐГІГ·ГЁГЄ Г±ГЇГ ГўГ­Г®Гў
 Spawns.OnSpawn.Add(function(player) {
 	++player.Properties.Spawns.Value;
 });
-// счетчик смертей
+// Г±Г·ГҐГІГ·ГЁГЄ Г±Г¬ГҐГ°ГІГҐГ©
 Damage.OnDeath.Add(function(player) {
 	++player.Properties.Deaths.Value;
 });
-// счетчик убийств
+// Г±Г·ГҐГІГ·ГЁГЄ ГіГЎГЁГ©Г±ГІГў
 Damage.OnKill.Add(function(player, killed) {
 	if (killed.Team != null && killed.Team != player.Team) {
 		++player.Properties.Kills.Value;
@@ -129,7 +129,7 @@ Damage.OnKill.Add(function(player, killed) {
 	}
 });
 
-// настройка переключения режимов
+// Г­Г Г±ГІГ°Г®Г©ГЄГ  ГЇГҐГ°ГҐГЄГ«ГѕГ·ГҐГ­ГЁГї Г°ГҐГ¦ГЁГ¬Г®Гў
 mainTimer.OnTimer.Add(function() {
 	switch (stateProp.Value) {
 	case WaitingStateValue:
@@ -147,10 +147,10 @@ mainTimer.OnTimer.Add(function() {
 	}
 });
 
-// задаем первое игровое состояние
+// Г§Г Г¤Г ГҐГ¬ ГЇГҐГ°ГўГ®ГҐ ГЁГЈГ°Г®ГўГ®ГҐ Г±Г®Г±ГІГ®ГїГ­ГЁГҐ
 SetWaitingMode();
 
-// состояния игры
+// Г±Г®Г±ГІГ®ГїГ­ГЁГї ГЁГЈГ°Г»
 function SetWaitingMode() {
 	stateProp.Value = WaitingStateValue;
 	Ui.GetContext().Hint.Value = "Hint/WaitingPlayers";
